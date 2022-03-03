@@ -1,9 +1,10 @@
 package project.society.data.dao;
 
+import project.society.data.dto.DTO;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-abstract class ReactiveDAOService<T, ID> {
+abstract class ReactiveDAOService<T extends DTO<ID>, ID> {
     protected final GenericReactiveDAO genericReactiveDAO;
 
     public ReactiveDAOService(GenericReactiveDAO genericReactiveDAO) {
