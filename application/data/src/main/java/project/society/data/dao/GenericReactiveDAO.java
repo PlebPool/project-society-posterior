@@ -34,6 +34,11 @@ public class GenericReactiveDAO {
         return this.r2dbcEntityTemplate.select(Query.query(Criteria.where(idColumnName).is(id)), clazz);
     }
 
+    public Mono<Integer> deleteById(String id, Class<? extends DTO<?>> clazz) {
+        String idColumnName = this.getIdColumnName(clazz);
+        return this.r2dbcEntityTemplate.delete(Query.query(Criteria.where(idColumnName).is(id)), clazz);
+    }
+
     /**
      * Saves an item. Inserts if item does not already exist. Updates if it does.
      * @param item Item to save.

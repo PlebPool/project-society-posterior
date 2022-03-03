@@ -4,7 +4,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 abstract class ReactiveDAOService<T, ID> {
-    private final GenericReactiveDAO genericReactiveDAO;
+    protected final GenericReactiveDAO genericReactiveDAO;
 
     public ReactiveDAOService(GenericReactiveDAO genericReactiveDAO) {
         this.genericReactiveDAO = genericReactiveDAO;
