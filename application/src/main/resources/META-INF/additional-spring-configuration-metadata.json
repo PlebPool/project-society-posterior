@@ -1,11 +1,6 @@
 {
   "properties": [
     {
-      "name": "project.dev.tools",
-      "type": "java.lang.String",
-      "description": "If true, enables dev routes that contains sensitive runtime information. (They are not secured)."
-    },
-    {
       "name": "project.dev.csrf",
       "type": "java.lang.String",
       "description": "If true enabled CSRF protection. Disable only for dev purposes."
@@ -14,20 +9,5 @@
       "name": "project.dev.frontend.url",
       "type": "java.lang.String",
       "description": "Specify frontend url for cors filter."
-    },
-    {
-      "name": "project.dev.session.cookie.same-site",
-      "type": "java.lang.String",
-      "description": "Specify session cookie same-site value."
-    },
-    {
-      "name": "project.dev.domain",
-      "type": "java.lang.String",
-      "description": "Specify cookie domain."
-    },
-    {
-      "name": "project.dev.session.cookie.name",
-      "type": "java.lang.String",
-      "description": "Specify name of session cookie."
     }
   ] }

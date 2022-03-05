@@ -10,11 +10,17 @@ import java.io.Serializable;
 import java.time.Instant;
 
 public class DbMapSession implements HasId<String> {
+
     @Id @Column("id") private String id;
+
     private String originalId;
+
     private byte[] sessionAttrs;
+
     private Instant creationTime;
+
     private Instant lastAccessedTime;
+
     /**
      * Based on {@link CustomizedMapSession#getMaxInactiveInterval()}
      */

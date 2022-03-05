@@ -18,13 +18,7 @@ logging:
     root: DEBUG or INFO
 project:
   dev:
-    domain: null
-    tools: false
     csrf: true
-    session:
-      cookie:
-        same-site: None
-        name: SESSION
     frontend:
       url: frontendUrl
 server:

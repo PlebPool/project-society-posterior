@@ -5,6 +5,7 @@ module security {
     requires spring.session.core;
     requires reactor.core;
     requires data;
+    requires config;
     requires spring.boot.autoconfigure;
     requires spring.web;
     requires spring.core;

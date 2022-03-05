@@ -19,7 +19,7 @@ import org.springframework.security.oauth2.client.web.DefaultReactiveOAuth2Autho
 import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
-import project.society.application.config.PropertyNameHolder;
+import project.society.config.property_names.PropertyNameHolder;
 
 @Configuration
 @EnableWebFluxSecurity

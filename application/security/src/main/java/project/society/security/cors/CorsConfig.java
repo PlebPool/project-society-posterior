@@ -8,7 +8,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import project.society.application.config.PropertyNameHolder;
+import project.society.config.property_names.PropertyNameHolder;
 
 @Configuration
 public class CorsConfig {
