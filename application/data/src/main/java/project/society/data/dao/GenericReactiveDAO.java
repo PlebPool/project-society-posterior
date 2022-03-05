@@ -5,7 +5,7 @@ import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
-import project.society.data.dto.DTO;
+import project.society.data.dto.HasId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -19,22 +19,22 @@ public class GenericReactiveDAO {
         this.r2dbcEntityTemplate = r2dbcEntityTemplate;
     }
 
-    public Mono<Boolean> existsById(String id, Class<? extends DTO<?>> clazz) {
+    public Mono<Boolean> existsById(String id, Class<? extends HasId<?>> clazz) {
         String idColumnName = this.getIdColumnName(clazz);
         return this.r2dbcEntityTemplate.exists(Query.query(Criteria.where(idColumnName).is(id)), clazz);
     }
 
-    public <T extends DTO<?>> Mono<T> findOneById(String id, Class<T> clazz) {
+    public <T extends HasId<?>> Mono<T> findOneById(String id, Class<T> clazz) {
         String idColumnName = this.getIdColumnName(clazz);
         return this.r2dbcEntityTemplate.selectOne(Query.query(Criteria.where(idColumnName).is(id)), clazz);
     }
 
-    public <T extends DTO<?>> Flux<T> findById(String id, Class<T> clazz) {
+    public <T extends HasId<?>> Flux<T> findById(String id, Class<T> clazz) {
         String idColumnName = this.getIdColumnName(clazz);
         return this.r2dbcEntityTemplate.select(Query.query(Criteria.where(idColumnName).is(id)), clazz);
     }
 
-    public Mono<Integer> deleteById(String id, Class<? extends DTO<?>> clazz) {
+    public Mono<Integer> deleteById(String id, Class<? extends HasId<?>> clazz) {
         String idColumnName = this.getIdColumnName(clazz);
         return this.r2dbcEntityTemplate.delete(Query.query(Criteria.where(idColumnName).is(id)), clazz);
     }
@@ -46,14 +46,14 @@ public class GenericReactiveDAO {
      * @param <T> Type of item to save.
      * @return {@link Mono} of {@link T}.
      */
-    public <T extends DTO<?>> Mono<T> save(T item, Class<T> clazz) {
+    public <T extends HasId<?>> Mono<T> save(T item, Class<T> clazz) {
         return this.existsById(item.getId().toString(), clazz)
                 .flatMap(exists -> (exists)
                         ? this.r2dbcEntityTemplate.insert(item)
                         : this.r2dbcEntityTemplate.update(item));
     }
 
-    public <T extends DTO<?>> Flux<T> idLike(String idToMatch, Class<T> clazz) {
+    public <T extends HasId<?>> Flux<T> idLike(String idToMatch, Class<T> clazz) {
         String idColumnName = this.getIdColumnName(clazz);
         return this.r2dbcEntityTemplate.select(Query.query(Criteria.where(idColumnName).like(idToMatch)), clazz);
     }
@@ -65,7 +65,7 @@ public class GenericReactiveDAO {
      * @param clazz {@link Class} we wan to extract id column name from.
      * @return {@link String} id column name.
      */
-    private String getIdColumnName(Class<? extends DTO<?>> clazz) {
+    private String getIdColumnName(Class<? extends HasId<?>> clazz) {
         for(Field field : clazz.getDeclaredFields()) {
             for(Annotation annotation : field.getDeclaredAnnotations()) {
                 if(annotation instanceof Id) {

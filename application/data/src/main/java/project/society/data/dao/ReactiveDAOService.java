@@ -1,20 +1,20 @@
 package project.society.data.dao;
 
-import project.society.data.dto.DTO;
+import project.society.data.dto.HasId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-abstract class ReactiveDAOService<T extends DTO<ID>, ID> {
+public abstract class ReactiveDAOService<OUT extends HasId<ID>, ID> {
     protected final GenericReactiveDAO genericReactiveDAO;
 
     public ReactiveDAOService(GenericReactiveDAO genericReactiveDAO) {
         this.genericReactiveDAO = genericReactiveDAO;
     }
 
-    abstract Mono<Boolean> existsById(ID id);
-    abstract Flux<T> findOneById(ID id);
-    abstract Mono<T> findById(ID id);
-    abstract Mono<T> save(T item);
-    abstract Mono<Integer> deleteById(ID id);
-    abstract Flux<T> idLike(String idToMatch);
+    public abstract Mono<Boolean> existsById(ID id);
+    public abstract Mono<OUT> findOneById(ID id);
+    public abstract Flux<OUT> findById(ID id);
+    public abstract Mono<OUT> save(OUT item);
+    public abstract Mono<Integer> deleteById(ID id);
+    public abstract Flux<OUT> idLike(String idToMatch);
 }
