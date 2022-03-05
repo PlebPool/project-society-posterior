@@ -4,7 +4,7 @@ import java.io.*;
 
 public class ObjectToByteArrayAndBack {
     /**
-     *
+     * Turns an object into a byte array.
      * @param serializable {@link Serializable} object.
      * @return {@link byte[]}
      * @throws IOException Forwarded from {@link ObjectInputStream}.
@@ -18,7 +18,7 @@ public class ObjectToByteArrayAndBack {
     }
 
     /**
-     *
+     * Turns a byte array into an object.
      * @param bytes {@link byte[]} representing an object of type {@link T}.
      * @param <T> Type of object represented by {@link byte[]}.
      * @return {@link T}

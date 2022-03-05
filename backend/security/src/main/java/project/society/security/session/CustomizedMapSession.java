@@ -106,6 +106,11 @@ public class CustomizedMapSession implements Session, HasId<String> {
         return this.originalId;
     }
 
+    /**
+     * Generates and sets a new id for this.
+     * It also returns the id.
+     * @return {@link String}
+     */
     @Override
     public String changeSessionId() {
         String changedId = generateId();
@@ -140,12 +145,22 @@ public class CustomizedMapSession implements Session, HasId<String> {
         return now.minus(this.maxInactiveInterval).compareTo(this.lastAccessedTime) >= 0;
     }
 
+    /**
+     * Gets an attribute by name. Casts it to {@link T}.
+     * @param attributeName Name of attribute. Usually either a class name or snake_case.
+     * @param <T> Type of the attribute.
+     * @return {@link T}.
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getAttribute(String attributeName) {
         return (T) this.sessionAttrs.get(attributeName);
     }
 
+    /**
+     * Returns a {@link HashSet} of attribute names.
+     * @return {@link Set} of attribute names.
+     */
     @Override
     public Set<String> getAttributeNames() {
         return new HashSet<>(this.sessionAttrs.keySet());
@@ -161,6 +176,10 @@ public class CustomizedMapSession implements Session, HasId<String> {
         }
     }
 
+    /**
+     * Removes an attribute by name.
+     * @param attributeName Name of target attribute.
+     */
     @Override
     public void removeAttribute(String attributeName) {
         this.sessionAttrs.remove(attributeName);
@@ -195,6 +214,10 @@ public class CustomizedMapSession implements Session, HasId<String> {
         return this.id.hashCode();
     }
 
+    /**
+     * Generates and returns a random UUID.
+     * @return {@link UUID#toString()}.
+     */
     private static String generateId() {
         return UUID.randomUUID().toString();
     }

@@ -49,8 +49,8 @@ public class GenericReactiveDAO {
     public <T extends HasId<?>> Mono<T> save(T item, Class<T> clazz) {
         return this.existsById(item.getId().toString(), clazz)
                 .flatMap(exists -> (exists)
-                        ? this.r2dbcEntityTemplate.insert(item)
-                        : this.r2dbcEntityTemplate.update(item));
+                        ? this.r2dbcEntityTemplate.update(item)
+                        : this.r2dbcEntityTemplate.insert(item));
     }
 
     public <T extends HasId<?>> Flux<T> idLike(String idToMatch, Class<T> clazz) {

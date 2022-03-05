@@ -24,6 +24,9 @@ import project.society.utility.property_names.PropertyNameHolder;
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
+    /**
+     * Name of environment variable containing oauth2 google variables.
+     */
     public static final String GOOGLE_ENV_PATH = "spring.security.oauth2.client.registration.google";
     private final Environment environment;
 
@@ -47,17 +50,31 @@ public class SecurityConfig {
                 .and().build();
     }
 
+    /**
+     * Only loaded if environment property {@link PropertyNameHolder#PROJECT_DEV_CSRF} is false.
+     * Which it is by default.
+     * @param security {@link ServerHttpSecurity}.
+     * @return {@link SecurityWebFilterChain}.
+     */
     @Bean
     @ConditionalOnProperty(value = PropertyNameHolder.PROJECT_DEV_CSRF, havingValue = "false")
     public SecurityWebFilterChain csrfDisable(ServerHttpSecurity security) {
         return security.csrf().disable().build();
     }
 
+    /**
+     * Returns a repository containing our {@link ClientRegistration}'s.
+     * @return {@link ReactiveClientRegistrationRepository}.
+     */
     @Bean
     public ReactiveClientRegistrationRepository reactiveClientRegistrationRepository() {
         return new InMemoryReactiveClientRegistrationRepository(this.googleClientRegistration());
     }
 
+    /**
+     * Google client registration.
+     * @return {@link ClientRegistration}.
+     */
     private ClientRegistration googleClientRegistration() {
         return CommonOAuth2Provider.GOOGLE.getBuilder("google")
                 .clientId(environment.getProperty(GOOGLE_ENV_PATH + ".client-id"))
@@ -70,6 +87,7 @@ public class SecurityConfig {
     }
 
     /**
+     * OAuth2AuthorizedClientManager.
      * @param clientRegistrationRepository {@link ReactiveClientRegistrationRepository}
      * @param authorizedClientRepository {@link ServerOAuth2AuthorizedClientRepository}
      * @return - {@link ReactiveOAuth2AuthorizedClientManager}

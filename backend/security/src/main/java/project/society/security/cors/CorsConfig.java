@@ -12,6 +12,10 @@ import project.society.utility.property_names.PropertyNameHolder;
 
 @Configuration
 public class CorsConfig {
+    /**
+     * @param environment Interface allowing us to read environment variables.
+     * @return {@link CorsConfigurationSource}. Source of cors configuration.
+     */
     @Bean("myCorsConfig")
     public CorsConfigurationSource corsConfigurationSource(Environment environment) {
         String frontendOrigin = environment.getProperty(PropertyNameHolder.PROJECT_DEV_FRONTEND_URL);
