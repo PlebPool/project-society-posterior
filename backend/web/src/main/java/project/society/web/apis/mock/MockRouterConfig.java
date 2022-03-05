@@ -10,6 +10,11 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 
 @Configuration
 public class MockRouterConfig {
+    /**
+     * Router matching a path to a {@link org.springframework.web.reactive.function.server.HandlerFunction}.
+     * @param mockHandler {@link Bean}
+     * @return {@link RouterFunction}.
+     */
     @Bean
     public RouterFunction<ServerResponse> mockRouter(
             MockHandler mockHandler
