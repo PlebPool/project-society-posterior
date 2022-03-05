@@ -6,7 +6,7 @@ CREATE USER IF NOT EXISTS 'user'@'%' IDENTIFIED BY 'pass';
 GRANT ALL ON db_name.* TO 'user'@'%';
 
 CREATE TABLE IF NOT EXISTS db_name.course_progress(user_id_and_id VARCHAR(255) PRIMARY KEY, id VARCHAR(255), name VARCHAR(255), progress DOUBLE);
-CREATE TABLE IF NOT EXISTS db_name.time_block_list(db_id VARCHAR(255) PRIMARY KEY, uuid VARCHAR(255), day_of_week VARCHAR(255), time_blocks TEXT);
+CREATE TABLE IF NOT EXISTS db_name.time_block_day(db_id VARCHAR(255) PRIMARY KEY, uuid VARCHAR(255), day_of_week VARCHAR(255), time_blocks TEXT);
 
 CREATE TABLE IF NOT EXISTS db_name.sessions(id VARCHAR(255) PRIMARY KEY, original_id VARCHAR(255), session_attrs BLOB, creation_time DATETIME, last_accessed_time DATETIME, expires_at DATETIME);
 CREATE TABLE IF NOT EXISTS db_name.session_attribute(id_and_attribute_name VARCHAR(255) PRIMARY KEY, attribute_name VARCHAR(255), attribute_value TEXT);
