@@ -19,21 +19,47 @@ public class GenericReactiveDAO {
         this.r2dbcEntityTemplate = r2dbcEntityTemplate;
     }
 
+    /**
+     * Checks if row with id exists.
+     * @param id Target id.
+     * @param clazz Class containing {@link Id}, and {@link org.springframework.data.relational.core.mapping.Table}.
+     * @return {@link Mono} of {@link Boolean}.
+     */
     public Mono<Boolean> existsById(String id, Class<? extends HasId<?>> clazz) {
         String idColumnName = this.getIdColumnName(clazz);
         return this.r2dbcEntityTemplate.exists(Query.query(Criteria.where(idColumnName).is(id)), clazz);
     }
 
+    /**
+     * Finds one row containing id.
+     * @param id Target id.
+     * @param clazz Class containing {@link Id}, and {@link org.springframework.data.relational.core.mapping.Table}.
+     * @param <T> Type containing {@link Id}, and {@link org.springframework.data.relational.core.mapping.Table}.
+     * @return {@link Mono} of {@link T}.
+     */
     public <T extends HasId<?>> Mono<T> findOneById(String id, Class<T> clazz) {
         String idColumnName = this.getIdColumnName(clazz);
         return this.r2dbcEntityTemplate.selectOne(Query.query(Criteria.where(idColumnName).is(id)), clazz);
     }
 
+    /**
+     * Find {0,} rows containing id.
+     * @param id Target id.
+     * @param clazz Class containing {@link Id}, and {@link org.springframework.data.relational.core.mapping.Table}.
+     * @param <T> Type containing {@link Id}, and {@link org.springframework.data.relational.core.mapping.Table}.
+     * @return {@link Flux} of {@link T}.
+     */
     public <T extends HasId<?>> Flux<T> findById(String id, Class<T> clazz) {
         String idColumnName = this.getIdColumnName(clazz);
         return this.r2dbcEntityTemplate.select(Query.query(Criteria.where(idColumnName).is(id)), clazz);
     }
 
+    /**
+     * Deletes {0,} rows containing id. Returns {@link Integer} with amount of rows deleted.
+     * @param id Target id.
+     * @param clazz Class containing {@link Id}, and {@link org.springframework.data.relational.core.mapping.Table}.
+     * @return {@link Mono} of {@link Integer}.
+     */
     public Mono<Integer> deleteById(String id, Class<? extends HasId<?>> clazz) {
         String idColumnName = this.getIdColumnName(clazz);
         return this.r2dbcEntityTemplate.delete(Query.query(Criteria.where(idColumnName).is(id)), clazz);
@@ -53,6 +79,13 @@ public class GenericReactiveDAO {
                         : this.r2dbcEntityTemplate.insert(item));
     }
 
+    /**
+     * Returns rows with an id LIKE {@link String}.
+     * @param idToMatch The id to match.
+     * @param clazz Class containing {@link Id}, and {@link org.springframework.data.relational.core.mapping.Table}.
+     * @param <T> Type containing {@link Id}, and {@link org.springframework.data.relational.core.mapping.Table}.
+     * @return {@link Flux} of {@link T}.
+     */
     public <T extends HasId<?>> Flux<T> idLike(String idToMatch, Class<T> clazz) {
         String idColumnName = this.getIdColumnName(clazz);
         return this.r2dbcEntityTemplate.select(Query.query(Criteria.where(idColumnName).like(idToMatch)), clazz);
