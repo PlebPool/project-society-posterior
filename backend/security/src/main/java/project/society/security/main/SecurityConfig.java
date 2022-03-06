@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.client.registration.ReactiveClientReg
 import org.springframework.security.oauth2.client.web.DefaultReactiveOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import project.society.utility.property_names.PropertyNameHolder;
 
@@ -39,7 +40,9 @@ public class SecurityConfig {
             ServerHttpSecurity http,
             @Qualifier("myCorsConfig") CorsConfigurationSource corsSource
     ) {
+        CookieServerCsrfTokenRepository csrfTokenRepository = CookieServerCsrfTokenRepository.withHttpOnlyFalse();
         return http
+                .csrf().csrfTokenRepository(csrfTokenRepository).and()
                 .cors().configurationSource(corsSource)
                 .and().authorizeExchange()
                         .pathMatchers("/no-auth/**", "/").permitAll()

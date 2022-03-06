@@ -10,6 +10,8 @@ import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import project.society.utility.property_names.PropertyNameHolder;
 
+import java.util.List;
+
 @Configuration
 public class CorsConfig {
     /**
@@ -22,10 +24,10 @@ public class CorsConfig {
         Assert.hasLength(frontendOrigin, "Frontend origin cannot be empty.");
         CorsConfiguration cors = new CorsConfiguration();
         cors.addAllowedOrigin(frontendOrigin);
-        cors.addAllowedHeader(String.valueOf(HttpHeaderNames.CONTENT_TYPE)); // TODO: MAKE REQUIRED.
+        cors.addAllowedHeader(String.valueOf(HttpHeaderNames.CONTENT_TYPE)); // TODO: MAKE REQUIRED FOR MUTATIVE HTTP METHODS.
+        cors.setAllowedMethods(List.of("POST", "GET", "DELETE", "OPTIONS", "PUT"));
         cors.setAllowCredentials(true);
         cors.setMaxAge(3600L);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", cors);
         return source;

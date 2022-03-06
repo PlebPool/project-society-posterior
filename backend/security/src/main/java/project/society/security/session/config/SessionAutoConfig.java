@@ -39,7 +39,7 @@ public class SessionAutoConfig {
     @Bean
     public WebSessionIdResolver webSessionIdResolver() {
         CookieWebSessionIdResolver resolver = new CookieWebSessionIdResolver();
-        resolver.addCookieInitializer(responseCookieBuilder -> responseCookieBuilder.sameSite("None"));
+        resolver.addCookieInitializer(responseCookieBuilder -> responseCookieBuilder.sameSite("Lax"));
         return resolver;
     }
 }
