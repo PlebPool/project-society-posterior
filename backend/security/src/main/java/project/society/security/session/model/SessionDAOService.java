@@ -157,5 +157,4 @@ public class SessionDAOService extends ReactiveDAOService<CustomizedMapSession, 
             this.expiresAt = expiresAt;
         }
     }
-
 }

@@ -10,11 +10,12 @@
     </parent>
     <groupId>project.society</groupId>
     <artifactId>web</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${project.version}</version>
     <name>web</name>
     <description>web</description>
     <properties>
         <java.version>11</java.version>
+        <project.version>0.0.1-SNAPSHOT</project.version>
     </properties>
     <dependencies>
         <dependency>
@@ -36,7 +37,7 @@
         <dependency>
             <groupId>project.society</groupId>
             <artifactId>data</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

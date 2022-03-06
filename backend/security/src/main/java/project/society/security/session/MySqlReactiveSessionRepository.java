@@ -71,5 +71,4 @@ public class MySqlReactiveSessionRepository implements ReactiveSessionRepository
             return Mono.just(result);
         });
     }
-
 }

@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.session.ReactiveSessionRepository;
 import org.springframework.session.config.annotation.web.server.EnableSpringWebSession;
 import org.springframework.util.Assert;
+import org.springframework.web.server.session.CookieWebSessionIdResolver;
+import org.springframework.web.server.session.WebSessionIdResolver;
 import project.society.data.dao.GenericReactiveDAO;
 import project.society.security.session.CustomizedMapSession;
 import project.society.security.session.MySqlReactiveSessionRepository;
@@ -32,6 +34,13 @@ public class SessionAutoConfig {
     @Bean
     public ReactiveSessionRepository<CustomizedMapSession> mySqlReactiveSessionRepository(SessionDAOService sessionDAOService) {
         return new MySqlReactiveSessionRepository(sessionDAOService);
+    }
+
+    @Bean
+    public WebSessionIdResolver webSessionIdResolver() {
+        CookieWebSessionIdResolver resolver = new CookieWebSessionIdResolver();
+        resolver.addCookieInitializer(responseCookieBuilder -> responseCookieBuilder.sameSite("None"));
+        return resolver;
     }
 }
 

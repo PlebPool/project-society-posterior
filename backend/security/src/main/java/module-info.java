@@ -14,4 +14,5 @@ open module security {
     requires spring.security.oauth2.client;
     requires spring.security.config;
     requires spring.beans;
+    requires spring.webflux;
 }
