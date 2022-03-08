@@ -15,4 +15,5 @@ open module security {
     requires spring.security.config;
     requires spring.beans;
     requires spring.webflux;
+    requires spring.security.core;
 }

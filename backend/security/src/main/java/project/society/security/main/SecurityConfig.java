@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.client.web.server.ServerOAuth2Authori
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import project.society.security.logout.SessionLogoutHandler;
 import project.society.utility.property_names.PropertyNameHolder;
 
 @Configuration
@@ -38,7 +39,8 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(
             ServerHttpSecurity http,
-            @Qualifier("myCorsConfig") CorsConfigurationSource corsSource
+            @Qualifier("myCorsConfig") CorsConfigurationSource corsSource,
+            SessionLogoutHandler sessionLogoutHandler
     ) {
         CookieServerCsrfTokenRepository csrfTokenRepository = CookieServerCsrfTokenRepository.withHttpOnlyFalse();
         return http
@@ -49,6 +51,7 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyExchange().authenticated()
                 .and().oauth2Login()
+                .and().logout().logoutHandler(sessionLogoutHandler)
                 .and().oauth2Client().clientRegistrationRepository(this.reactiveClientRegistrationRepository())
                 .and().build();
     }
