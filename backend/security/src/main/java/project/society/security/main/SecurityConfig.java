@@ -42,13 +42,15 @@ public class SecurityConfig {
             @Qualifier("myCorsConfig") CorsConfigurationSource corsSource,
             SessionLogoutHandler sessionLogoutHandler
     ) {
-        CookieServerCsrfTokenRepository csrfTokenRepository = CookieServerCsrfTokenRepository.withHttpOnlyFalse();
+//        CookieServerCsrfTokenRepository csrfTokenRepository = CookieServerCsrfTokenRepository.withHttpOnlyFalse();
         return http
-                .csrf().csrfTokenRepository(csrfTokenRepository).and()
+//                .csrf().csrfTokenRepository(csrfTokenRepository)
+//                .and()
                 .cors().configurationSource(corsSource)
                 .and().authorizeExchange()
                         .pathMatchers("/no-auth/**", "/").permitAll()
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/logout").permitAll()
                 .anyExchange().authenticated()
                 .and().oauth2Login()
                 .and().logout().logoutHandler(sessionLogoutHandler)

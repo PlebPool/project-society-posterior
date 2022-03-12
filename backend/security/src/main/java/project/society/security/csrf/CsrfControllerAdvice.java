@@ -10,7 +10,7 @@ import project.society.utility.property_names.PropertyNameHolder;
 import reactor.core.publisher.Mono;
 
 @ControllerAdvice
-@ConditionalOnProperty(value = PropertyNameHolder.PROJECT_DEV_CSRF, havingValue = "false")
+@ConditionalOnProperty(value = PropertyNameHolder.PROJECT_DEV_CSRF, havingValue = "true")
 public class CsrfControllerAdvice {
     @ModelAttribute
     public Mono<CsrfToken> csrfToken(ServerWebExchange exchange) {

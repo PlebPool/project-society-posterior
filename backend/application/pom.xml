@@ -15,7 +15,7 @@
     <description>application</description>
     <properties>
         <java.version>11</java.version>
-        <project.version>0.0.1-SNAPSHOT</project.version>
+        <project.version>0.0.3-SNAPSHOT</project.version>
     </properties>
     <dependencies>
         <dependency>
@@ -31,25 +31,25 @@
         <dependency>
             <groupId>project.society</groupId>
             <artifactId>data</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>project.society</groupId>
             <artifactId>utility</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>project.society</groupId>
             <artifactId>security</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>project.society</groupId>
             <artifactId>web</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -59,6 +59,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${project.parent.version}</version>
             </plugin>
         </plugins>
     </build>

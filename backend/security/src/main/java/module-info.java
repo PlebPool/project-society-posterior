@@ -16,4 +16,5 @@ open module security {
     requires spring.beans;
     requires spring.webflux;
     requires spring.security.core;
+    exports project.society.security.util;
 }

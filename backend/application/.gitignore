@@ -36,3 +36,4 @@ build/
 application.yml
 schema.sql
 society.p12
+docker-compose.yml

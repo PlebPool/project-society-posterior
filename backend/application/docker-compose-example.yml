@@ -1,0 +1,20 @@
+version: "3"
+services:
+
+  perconadb:
+    image: mysql-image:tag
+    networks:
+      - society-and-percona
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+
+  society-backend:
+    image: backend-image:tag
+    ports:
+      - "8000:8000"
+    networks:
+      - society-and-percona
+    depends_on:
+      - perconadb
+networks:
+  society-and-percona:

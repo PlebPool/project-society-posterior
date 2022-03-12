@@ -1,9 +1,6 @@
 package project.society.web.apis.mock;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -16,6 +13,6 @@ public class MockHandler {
      * @return {@link Mono} of {@link ServerResponse}.
      */
     public Mono<ServerResponse> mock(ServerRequest request) {
-        return ServerResponse.ok().header(HttpHeaders.CONTENT_TYPE, String.valueOf(MediaType.APPLICATION_JSON)).bodyValue("I am mocking you.");
+        return ServerResponse.ok().bodyValue("I am mocking you.");
     }
 }
