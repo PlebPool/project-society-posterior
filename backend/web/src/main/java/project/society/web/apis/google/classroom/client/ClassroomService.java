@@ -3,7 +3,6 @@ package project.society.web.apis.google.classroom.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -42,20 +41,17 @@ public class ClassroomService {
      * @return {@link Mono} of {@link T}.
      */
     public <T> Mono<T> getResponseMono(String path, String token, Class<T> clazz) {
-        // region debug
         String newRequestDebugStr = "New Request " + path;
         logger.debug("\n" + "|".repeat(newRequestDebugStr.length()) +
                 "\n" + newRequestDebugStr + "\n" + "V".repeat(newRequestDebugStr.length()));
-        // endregion
         return client.get().uri(path)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .header("Authorization", "Bearer " + token)
                 .exchangeToMono(clientResponse -> {
-                    // region debug
-                    String responseDebugStr = "Uri: " + path + ", Status Code: " + clientResponse.statusCode() +
+                    String responseDebugStr =
+                            "uri: " + path + ", Status Code: " + clientResponse.statusCode() +
                                     ", Token: " + token.startsWith("ya29");
                     logger.debug("\n" + "-".repeat(responseDebugStr.length()) +
                             "\n" + responseDebugStr + "\n" + "-".repeat(responseDebugStr.length()));
-                    // endregion
                     return clientResponse.bodyToMono(clazz);
                 });
     }

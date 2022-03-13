@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "project.dev.csrf",
+      "type": "java.lang.String",
+      "description": "If true enabled CSRF protection. Disable only for dev purposes."
+    },
+    {
+      "name": "project.dev.frontend.url",
+      "type": "java.lang.String",
+      "description": "Specify frontend url for cors filter."
+    }
+  ] }
