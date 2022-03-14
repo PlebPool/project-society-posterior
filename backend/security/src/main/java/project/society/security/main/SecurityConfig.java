@@ -18,10 +18,9 @@ import org.springframework.security.oauth2.client.registration.ReactiveClientReg
 import org.springframework.security.oauth2.client.web.DefaultReactiveOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import project.society.security.logout.SessionLogoutHandler;
-import project.society.utility.property_names.PropertyNameHolder;
+import project.society.utility.PropertyNameHolder;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -42,15 +41,13 @@ public class SecurityConfig {
             @Qualifier("myCorsConfig") CorsConfigurationSource corsSource,
             SessionLogoutHandler sessionLogoutHandler
     ) {
-//        CookieServerCsrfTokenRepository csrfTokenRepository = CookieServerCsrfTokenRepository.withHttpOnlyFalse();
         return http
-//                .csrf().csrfTokenRepository(csrfTokenRepository)
-//                .and()
+                .csrf().disable()
                 .cors().configurationSource(corsSource)
                 .and().authorizeExchange()
-                        .pathMatchers("/no-auth/**", "/").permitAll()
-                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/logout").permitAll()
+                .pathMatchers("/no-auth/**", "/").permitAll()
+                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .pathMatchers(HttpMethod.POST, "/logout").permitAll()
                 .anyExchange().authenticated()
                 .and().oauth2Login()
                 .and().logout().logoutHandler(sessionLogoutHandler)

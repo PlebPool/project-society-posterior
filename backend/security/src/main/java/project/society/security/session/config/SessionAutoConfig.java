@@ -9,8 +9,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.server.session.CookieWebSessionIdResolver;
 import org.springframework.web.server.session.WebSessionIdResolver;
 import project.society.data.dao.GenericReactiveDAO;
-import project.society.security.session.CustomizedMapSession;
-import project.society.security.session.MySqlReactiveSessionRepository;
+import project.society.security.session.model.CustomizedMapSession;
+import project.society.security.session.model.MySqlReactiveSessionRepository;
 import project.society.security.session.model.SessionDAOService;
 
 @Configuration
@@ -43,4 +43,3 @@ public class SessionAutoConfig {
         return resolver;
     }
 }
-

@@ -4,12 +4,11 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 import org.springframework.util.Assert;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import project.society.utility.property_names.PropertyNameHolder;
+import project.society.utility.PropertyNameHolder;
 
 import java.util.List;
 

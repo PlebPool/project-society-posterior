@@ -8,8 +8,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="utility" />
         <module name="security" />
-        <module name="data" />
         <module name="application" />
+        <module name="data" />
         <module name="web" />
       </profile>
     </annotationProcessing>

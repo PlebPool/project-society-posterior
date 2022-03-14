@@ -10,18 +10,13 @@
     </parent>
     <groupId>project.society</groupId>
     <artifactId>security</artifactId>
-    <version>${project.version}</version>
+    <version>0.0.1-SNAPSHOT</version>
     <name>security</name>
     <description>security</description>
     <properties>
         <java.version>11</java.version>
-        <project.version>0.0.1-SNAPSHOT</project.version>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-core</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
@@ -33,6 +28,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-core</artifactId>
         </dependency>
 
         <dependency>
@@ -52,25 +52,15 @@
         </dependency>
         <dependency>
             <groupId>project.society</groupId>
-            <artifactId>data</artifactId>
-            <version>${project.version}</version>
+            <artifactId>utility</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>project.society</groupId>
-            <artifactId>utility</artifactId>
-            <version>${project.version}</version>
+            <artifactId>data</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
-
-<!--    <build>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
-
 </project>
