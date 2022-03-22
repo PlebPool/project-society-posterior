@@ -1,4 +1,4 @@
-package project.society.web.google.classroom.courses.dto;
+package project.society.web.google.classroom.courses.web.domain;
 
 import project.society.web.google.classroom.ClassroomResponseType;
 
