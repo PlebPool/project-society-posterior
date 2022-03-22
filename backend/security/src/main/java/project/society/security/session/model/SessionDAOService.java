@@ -46,7 +46,8 @@ public class SessionDAOService extends ReactiveDAOService<CustomizedMapSession, 
 
     @Override
     public Flux<CustomizedMapSession> idLike(String idToMatch) {
-        return super.genericReactiveDAO.idLike(idToMatch, dtoClazz).mapNotNull(DbMapSession::getAsCustomizedMapSession);
+        return null; // No use case.
+//        return super.genericReactiveDAO.idLike(idToMatch, dtoClazz).mapNotNull(DbMapSession::getAsCustomizedMapSession);
     }
 
     @Table("sessions")
