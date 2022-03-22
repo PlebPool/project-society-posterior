@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import project.society.security.util.CustomOAuth2Util;
+import project.society.web.google.classroom.ClassroomResponseType;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -29,7 +30,7 @@ public class ClassroomService {
      * @param <T> {@link Class} to map response to.
      * @return {@link Mono} of {@link T}.
      */
-    public <T> Mono<T> getResponseMono(String path, ServerRequest request, Class<T> clazz) {
+    public <T extends ClassroomResponseType> Mono<T> getResponseMono(String path, ServerRequest request, Class<T> clazz) {
         return oAuth2Utils.extractAccessToken(request).flatMap(token -> getResponseMono(path, token, clazz));
     }
 
@@ -41,7 +42,7 @@ public class ClassroomService {
      * @param <T> {@link Class} to map response to.
      * @return {@link Mono} of {@link T}.
      */
-    public <T> Mono<T> getResponseMono(String path, String token, Class<T> clazz) {
+    public <T extends ClassroomResponseType> Mono<T> getResponseMono(String path, String token, Class<T> clazz) {
         String newRequestDebugStr = "New Request " + path;
         log.debug("\n" + "|".repeat(newRequestDebugStr.length()) + "\n" + newRequestDebugStr + "\n" + "V".repeat(newRequestDebugStr.length()));
         return client.get().uri(path)
