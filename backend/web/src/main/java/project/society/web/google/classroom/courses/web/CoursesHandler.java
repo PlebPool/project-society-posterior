@@ -20,10 +20,19 @@ public class CoursesHandler {
         this.classroomService = classroomService;
     }
 
+    /**
+     * Sends a request to google classroom api with access token provided in {@link ServerRequest}.
+     * If a request to "/courses" returns anything other than a 200 with json.
+     * It means that the user either has no courses, or that there is an issue with the Google Classroom api.
+     * If we don't get a valid response from Google, we redirect the user to "/no-bitches.jpg".
+     * This way, the user knows it has no bitches (courses).
+     * @param request Current {@link ServerRequest}.
+     * @return {@link Mono} of {@link ServerResponse}.
+     */
     public Mono<ServerResponse> getAllCoursesForUser(ServerRequest request) {
         return this.classroomService.getResponseMono("/courses", request, ClassroomCourseResponsePlural.class)
                 .map(ClassroomCourseResponsePlural::getCourses)
-                .switchIfEmpty(Mono.just(new ArrayList<>())) // Create an empty array if we don't get a response.
+                .switchIfEmpty(Mono.just(new ArrayList<>()))
                 .flatMap(singulars -> {
                     if(singulars.isEmpty()) {
                         return ServerResponse.temporaryRedirect(URI.create("/no-bitches.jpg")).build();
