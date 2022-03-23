@@ -7,9 +7,10 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import project.society.web.google.classroom.client.ClassroomService;
 import project.society.web.google.classroom.courses.web.domain.ClassroomCourseResponsePlural;
-import project.society.web.google.classroom.courses.web.domain.ClassroomCourseResponseSingular;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.util.ArrayList;
 
 @Component
 public class CoursesHandler {
@@ -20,11 +21,17 @@ public class CoursesHandler {
     }
 
     public Mono<ServerResponse> getAllCoursesForUser(ServerRequest request) {
-        return ServerResponse.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                .body(this.classroomService
-                        .getResponseMono("/courses", request, ClassroomCourseResponsePlural.class)
-                        .map(ClassroomCourseResponsePlural::getCourses)
-                        .flatMapMany(Flux::fromIterable), ClassroomCourseResponseSingular.class);
+        return this.classroomService.getResponseMono("/courses", request, ClassroomCourseResponsePlural.class)
+                .map(ClassroomCourseResponsePlural::getCourses)
+                .switchIfEmpty(Mono.just(new ArrayList<>())) // Create an empty array if we don't get a response.
+                .flatMap(singulars -> {
+                    if(singulars.isEmpty()) {
+                        return ServerResponse.temporaryRedirect(URI.create("/no-bitches.jpg")).build();
+                    }
+                    return ServerResponse.ok().header(
+                            HttpHeaders.CONTENT_TYPE,
+                            MediaType.APPLICATION_JSON.toString()
+                    ).bodyValue(singulars);
+                });
     }
 }
