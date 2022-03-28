@@ -19,6 +19,10 @@ public class GenericReactiveDAO {
         this.r2dbcEntityTemplate = r2dbcEntityTemplate;
     }
 
+    public R2dbcEntityTemplate getR2dbcEntityTemplate() {
+        return r2dbcEntityTemplate;
+    }
+
     /**
      * Checks if row with id exists.
      * @param id Target id.

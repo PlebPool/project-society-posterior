@@ -4,7 +4,7 @@ import project.society.data.dto.HasId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public abstract class ReactiveDAOService<OUT extends HasId<ID>, ID> {
+public abstract class ReactiveDAOService<OUT, ID> {
     protected final GenericReactiveDAO genericReactiveDAO;
 
     public ReactiveDAOService(GenericReactiveDAO genericReactiveDAO) {

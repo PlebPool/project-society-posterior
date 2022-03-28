@@ -31,6 +31,10 @@ public class ClassroomService {
      * @return {@link Mono} of {@link T}.
      */
     public <T extends ClassroomResponseType> Mono<T> getResponseMono(String path, ServerRequest request, Class<T> clazz) {
+//        return oAuth2Utils.extractOAuth2AuthorizedClient(request).flatMap(oAuth2AuthorizedClient -> {
+//            String token = oAuth2AuthorizedClient.getAccessToken().getTokenValue();
+//            return getResponseMono(path, token, clazz);
+//        });
         return oAuth2Utils.extractAccessToken(request).flatMap(token -> getResponseMono(path, token, clazz));
     }
 
@@ -43,15 +47,15 @@ public class ClassroomService {
      * @return {@link Mono} of {@link T}.
      */
     public <T extends ClassroomResponseType> Mono<T> getResponseMono(String path, String token, Class<T> clazz) {
-        String newRequestDebugStr = "New Request " + path;
-        log.debug("\n" + "|".repeat(newRequestDebugStr.length()) + "\n" + newRequestDebugStr + "\n" + "V".repeat(newRequestDebugStr.length()));
-        return client.get().uri(path)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                .exchangeToMono(clientResponse -> {
-                    String responseDebugStr =
-                            "uri: " + path + ", Status Code: " + clientResponse.statusCode() + ", Token: " + token.startsWith("ya29");
-                    log.debug("\n" + "-".repeat(responseDebugStr.length()) + "\n" + responseDebugStr + "\n" + "-".repeat(responseDebugStr.length()));
-                    return clientResponse.bodyToMono(clazz);
-                });
+            String newRequestDebugStr = "New Request " + path;
+            log.debug("\n" + "|".repeat(newRequestDebugStr.length()) + "\n" + newRequestDebugStr + "\n" + "V".repeat(newRequestDebugStr.length()));
+            return client.get().uri(path)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .exchangeToMono(clientResponse -> {
+                        String responseDebugStr =
+                                "uri: " + path + ", Status Code: " + clientResponse.statusCode() + ", Token: " + token.startsWith("ya29");
+                        log.debug("\n" + "-".repeat(responseDebugStr.length()) + "\n" + responseDebugStr + "\n" + "-".repeat(responseDebugStr.length()));
+                        return clientResponse.bodyToMono(clazz);
+                    });
     }
 }
