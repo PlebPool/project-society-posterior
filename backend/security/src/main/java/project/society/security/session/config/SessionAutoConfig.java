@@ -3,6 +3,8 @@ package project.society.security.session.config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.client.web.server.WebSessionServerOAuth2AuthorizedClientRepository;
 import org.springframework.session.ReactiveSessionRepository;
 import org.springframework.session.config.annotation.web.server.EnableSpringWebSession;
 import org.springframework.session.web.server.session.SpringSessionWebSessionStore;
@@ -35,6 +37,11 @@ public class SessionAutoConfig {
     @Bean
     public ReactiveSessionRepository<CustomizedMapSession> mySqlReactiveSessionRepository(SessionDAOService sessionDAOService) {
         return new MySqlReactiveSessionRepository(sessionDAOService);
+    }
+
+    @Bean
+    public ServerOAuth2AuthorizedClientRepository webSessionServerOAuth2AuthorizedClientRepository() {
+        return new WebSessionServerOAuth2AuthorizedClientRepository();
     }
 
     @Bean
