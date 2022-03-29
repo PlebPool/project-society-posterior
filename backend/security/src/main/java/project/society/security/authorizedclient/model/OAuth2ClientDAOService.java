@@ -8,16 +8,22 @@ import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import project.society.data.dao.GenericReactiveDAO;
 import project.society.data.dao.ReactiveDAOService;
 import project.society.data.dto.HasId;
-import project.society.security.session.model.ObjectToByteArrayAndBack;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
-import java.util.Arrays;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Collections;
+import java.util.Set;
 
 public class OAuth2ClientDAOService extends ReactiveDAOService<OAuth2AuthorizedClient, String> {
     public static final String PRINCIPAL_NAME_COLUMN = "principal_name";
@@ -38,8 +44,11 @@ public class OAuth2ClientDAOService extends ReactiveDAOService<OAuth2AuthorizedC
      */
     private final Class<OAuth2AuthorizedClientProxy> dtoClass = OAuth2AuthorizedClientProxy.class;
 
-    public OAuth2ClientDAOService(GenericReactiveDAO genericReactiveDAO) {
+    protected final ReactiveClientRegistrationRepository registrationRepository;
+
+    public OAuth2ClientDAOService(GenericReactiveDAO genericReactiveDAO, ReactiveClientRegistrationRepository registrationRepository) {
         super(genericReactiveDAO);
+        this.registrationRepository = registrationRepository;
     }
 
     /**
@@ -49,14 +58,14 @@ public class OAuth2ClientDAOService extends ReactiveDAOService<OAuth2AuthorizedC
      * @return {@link Mono} of {@link OAuth2AuthorizedClient}.
      */
     public Mono<OAuth2AuthorizedClient> getByClientIdAndPrincipalName(String clientId, String principalName) {
-        if(logger.isDebugEnabled()) {
-            logger.debug(String
-                    .format("%s: clientId=%s, principalName=%s", Object.class.getEnclosingMethod().getName(), clientId, principalName));
-        }
+//        if(logger.isDebugEnabled()) {
+//            logger.debug(String
+//                    .format("%s: clientId=%s, principalName=%s", Object.class.getEnclosingMethod().getName(), clientId, principalName));
+//        }
         return super.genericReactiveDAO.getR2dbcEntityTemplate()
                 .selectOne(Query.query(Criteria.where(CLIENT_ID_COLUMN).is(clientId)
                         .and(Criteria.where(PRINCIPAL_NAME_COLUMN).is(principalName))), dtoClass)
-                .map(OAuth2AuthorizedClientProxy::getAuthorizedClient);
+                .flatMap(OAuth2AuthorizedClientProxy::getAuthorizedClient);
     }
 
     /**
@@ -89,53 +98,78 @@ public class OAuth2ClientDAOService extends ReactiveDAOService<OAuth2AuthorizedC
                     .format("Saving: %s: %s=%s", Object.class.getEnclosingMethod().getName(), item.getClass().getName(), item));
         }
         return super.genericReactiveDAO.save(new OAuth2AuthorizedClientProxy(item), dtoClass)
-                .map(OAuth2AuthorizedClientProxy::getAuthorizedClient);
+                .flatMap(OAuth2AuthorizedClientProxy::getAuthorizedClient);
     }
 
     @Table(AUTHORIZED_CLIENTS_TABLE_NAME)
-    public class OAuth2AuthorizedClientProxy implements HasId<String> {
-        @Id @Column(PRINCIPAL_NAME_COLUMN) private final String id;
+    private class OAuth2AuthorizedClientProxy implements HasId<String> {
+        @Id @Column(PRINCIPAL_NAME_COLUMN) private final String principalName;
         @Column(CLIENT_ID_COLUMN) private final String clientRegistrationId;
-        @Column(AUTHORIZED_CLIENT_BODY_COLUMN) private final byte[] authorizedClient;
+        private final String accessTokenType;
+        private final String accessTokenValue;
+        private String accessTokenIssuedAt;
+        private String accessTokenExpiresAt;
+        private final String accessTokenScopes;
+        private String refreshTokenValue;
+        private String refreshTokenIssuedAt;
+
+        @Override
+        public String getId() {
+            return this.principalName;
+        }
+
+        @SuppressWarnings("unused")
+        public String getRefreshTokenValue() {
+            return refreshTokenValue;
+        }
+
+        @SuppressWarnings("unused")
+        public String getRefreshTokenIssuedAt() {
+            return refreshTokenIssuedAt;
+        }
 
         public OAuth2AuthorizedClientProxy(OAuth2AuthorizedClient authorizedClient) {
             Assert.notNull(authorizedClient, "OAuth2AuthorizedClient cannot be null.");
-            try {
-                this.authorizedClient = ObjectToByteArrayAndBack.objectToByteArray(authorizedClient);
-            } catch (IOException e) {
-                throw new RuntimeException("Error serializing authorizedClient.");
+            OAuth2AccessToken accessToken = authorizedClient.getAccessToken();
+            this.clientRegistrationId = authorizedClient.getClientRegistration().getRegistrationId();
+            this.principalName = authorizedClient.getPrincipalName();
+            this.accessTokenType = accessToken.getTokenType().getValue();
+            this.accessTokenValue = accessToken.getTokenValue();
+            if (accessToken.getIssuedAt() != null) {
+                this.accessTokenIssuedAt = LocalDateTime.ofInstant(accessToken.getIssuedAt(), ZoneId.systemDefault()).toString();
             }
-            this.id = authorizedClient.getPrincipalName();
-            this.clientRegistrationId = authorizedClient.getClientRegistration().getClientId();
-            if(logger.isDebugEnabled()) {
-                logger.debug(String
-                        .format("Created: %s: %s=%s", Object.class.getEnclosingMethod().getName(), this.getClass().getName(), this));
+            if (accessToken.getExpiresAt() != null) {
+                this.accessTokenExpiresAt = accessToken.getExpiresAt().toString();
             }
-        }
-
-        public String getClientRegistrationId() {
-            return clientRegistrationId;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public OAuth2AuthorizedClient getAuthorizedClient() {
-            try {
-                return ObjectToByteArrayAndBack.byteArrayToObject(authorizedClient);
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException("Error deserializing authorizedClient.");
+            this.accessTokenScopes = StringUtils.collectionToDelimitedString(accessToken.getScopes(), ",");
+            OAuth2RefreshToken refreshToken = authorizedClient.getRefreshToken();
+            if (refreshToken != null) {
+                this.refreshTokenValue = refreshToken.getTokenValue();
+            }
+            if (refreshToken != null) {
+                if(refreshToken.getIssuedAt() != null) {
+                    this.refreshTokenIssuedAt = LocalDateTime.ofInstant(refreshToken.getIssuedAt(), ZoneId.systemDefault()).toString();
+                }
             }
         }
 
-        @Override
-        public String toString() {
-            return "OAuth2AuthorizedClientProxy{" +
-                    "id='" + id + '\'' +
-                    ", clientRegistrationId='" + clientRegistrationId + '\'' +
-                    ", authorizedClient=" + Arrays.toString(authorizedClient) +
-                    '}';
+        public Mono<OAuth2AuthorizedClient> getAuthorizedClient() {
+            return registrationRepository.findByRegistrationId(this.clientRegistrationId)
+                    .map(clientRegistration -> new OAuth2AuthorizedClient(clientRegistration, this.principalName, this.getAccessToken()));
+        }
+
+        public OAuth2AccessToken getAccessToken() {
+            OAuth2AccessToken.TokenType tokenType = null;
+            if(OAuth2AccessToken.TokenType.BEARER.getValue().equalsIgnoreCase(this.accessTokenType)) {
+                tokenType = OAuth2AccessToken.TokenType.BEARER;
+            }
+            Set<String> scopes = Collections.emptySet();
+            if(!accessTokenScopes.isEmpty()) {
+                scopes = Set.of(this.accessTokenScopes.split(","));
+            }
+            assert tokenType != null;
+            return new OAuth2AccessToken(tokenType, this.accessTokenValue,
+                    Instant.parse(this.accessTokenIssuedAt), Instant.parse(this.accessTokenExpiresAt), scopes);
         }
     }
 

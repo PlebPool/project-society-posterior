@@ -3,11 +3,11 @@ package project.society.security.authorizedclient;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import project.society.security.authorizedclient.model.OAuth2ClientDAOService;
 import reactor.core.publisher.Mono;
 
 public class MySqlReactiveOAuth2AuthorizedClientService implements ReactiveOAuth2AuthorizedClientService {
-
     private final OAuth2ClientDAOService oAuth2ClientDAOService;
 
     public MySqlReactiveOAuth2AuthorizedClientService(OAuth2ClientDAOService oAuth2ClientDAOService) {
@@ -22,10 +22,11 @@ public class MySqlReactiveOAuth2AuthorizedClientService implements ReactiveOAuth
 
     @Override
     public Mono<Void> saveAuthorizedClient(OAuth2AuthorizedClient authorizedClient, Authentication principal) {
-        return this
+        return Mono.defer(() -> this
                 .loadAuthorizedClient(authorizedClient.getClientRegistration().getRegistrationId(), principal.getName())
-                .flatMap(this.oAuth2ClientDAOService::save)
-                .then();
+                .map(oAuth2AuthorizedClient -> oAuth2ClientDAOService.save(oAuth2AuthorizedClient))
+                .thenEmpty(Mono.empty()));
+
     }
 
     @Override
