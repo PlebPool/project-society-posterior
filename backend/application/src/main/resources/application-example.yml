@@ -18,6 +18,8 @@ logging:
     root: DEBUG or INFO
 project:
   dev:
+    sessions:
+      inactive-interval-s: 1800
     csrf: true
     frontend:
       url: frontendUrl

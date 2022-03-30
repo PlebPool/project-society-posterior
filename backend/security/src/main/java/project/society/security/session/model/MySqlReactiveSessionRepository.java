@@ -1,11 +1,14 @@
 package project.society.security.session.model;
 
+import org.springframework.core.env.Environment;
 import org.springframework.session.ReactiveSessionRepository;
 import org.springframework.session.Session;
+import project.society.utility.PropertyNameHolder;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Objects;
 
 public class MySqlReactiveSessionRepository implements ReactiveSessionRepository<CustomizedMapSession> {
 
@@ -13,17 +16,22 @@ public class MySqlReactiveSessionRepository implements ReactiveSessionRepository
      * If non-null, this value is used to override
      * {@link Session#setMaxInactiveInterval(Duration)}.
      */
-    private Integer defaultMaxInactiveInterval;
+    private Integer maxInactiveInterval;
 
     //    private final Map<String, Session> sessions;
     private final SessionDAOService sessions;
 
     /**
-     * Creates a new instance backed by the provided {@link Map}. This allows injecting a
-     * distributed {@link Map}.
+     * Creates a new instance backed by the provided {@link project.society.data.dao.ReactiveDAOService}.
+     * If environment variable with the name of string value of {@link PropertyNameHolder#PROJECT_DEV_SESSION_INACTIVE_INTERVAL} is set.
+     * It will override {@link Session#setMaxInactiveInterval(Duration)}
      * @param sessions the {@link Map} to use. Cannot be null.
      */
-    public MySqlReactiveSessionRepository(SessionDAOService sessions) {
+    public MySqlReactiveSessionRepository(SessionDAOService sessions, Environment env) {
+        String maxInactiveIntervalEnv = env.getProperty(PropertyNameHolder.PROJECT_DEV_SESSION_INACTIVE_INTERVAL);
+        if (maxInactiveIntervalEnv != null) {
+            this.maxInactiveInterval = Integer.valueOf(maxInactiveIntervalEnv);
+        }
         if (sessions == null) {
             throw new IllegalArgumentException("sessions cannot be null");
         }
@@ -33,11 +41,11 @@ public class MySqlReactiveSessionRepository implements ReactiveSessionRepository
     /**
      * If non-null, this value is used to override
      * {@link Session#setMaxInactiveInterval(Duration)}.
-     * @param defaultMaxInactiveInterval the number of seconds that the {@link Session}
+     * @param maxInactiveInterval the number of seconds that the {@link Session}
      * should be kept alive between client requests.
      */
-    public void setDefaultMaxInactiveInterval(int defaultMaxInactiveInterval) {
-        this.defaultMaxInactiveInterval = defaultMaxInactiveInterval;
+    public void setMaxInactiveInterval(int maxInactiveInterval) {
+        this.maxInactiveInterval = maxInactiveInterval;
     }
 
     @Override
@@ -64,8 +72,8 @@ public class MySqlReactiveSessionRepository implements ReactiveSessionRepository
     public Mono<CustomizedMapSession> createSession() {
         return Mono.defer(() -> {
             CustomizedMapSession result = new CustomizedMapSession();
-            if (this.defaultMaxInactiveInterval != null) {
-                result.setMaxInactiveInterval(Duration.ofSeconds(this.defaultMaxInactiveInterval));
+            if (this.maxInactiveInterval != null) {
+                result.setMaxInactiveInterval(Duration.ofSeconds(this.maxInactiveInterval));
             }
             return Mono.just(result);
         });
