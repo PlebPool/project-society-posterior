@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().configurationSource(corsSource)
                 .and().authorizeExchange()
-                .pathMatchers("/no-auth/**", "/").permitAll()
+                .pathMatchers("/no-auth/mock", "/").permitAll()
                 .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .pathMatchers(HttpMethod.POST, "/logout").permitAll()
                 .anyExchange().authenticated()

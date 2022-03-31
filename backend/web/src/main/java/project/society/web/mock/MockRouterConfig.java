@@ -2,6 +2,8 @@ package project.society.web.mock;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -20,6 +22,6 @@ public class MockRouterConfig {
             MockHandler mockHandler
     ) {
         return RouterFunctions
-                .route(GET("/mock"), mockHandler::mock);
+                .route(GET("/no-auth/mock"), mockHandler::mock);
     }
 }

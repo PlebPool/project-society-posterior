@@ -1,6 +1,5 @@
 package project.society.security.session.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -24,7 +23,6 @@ public class SessionAutoConfig {
      * @return {@link SessionDAOService}. Session focused abstraction for {@link GenericReactiveDAO}.
      */
     @Bean
-    @ConditionalOnMissingBean(SessionDAOService.class)
     public SessionDAOService sessionDAOService(GenericReactiveDAO dao) {
         Assert.notNull(dao, dao.getClass().getName() + " cannot be null.");
         return new SessionDAOService(dao);

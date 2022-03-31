@@ -18,7 +18,6 @@ public class MySqlReactiveSessionRepository implements ReactiveSessionRepository
      */
     private Integer maxInactiveInterval;
 
-    //    private final Map<String, Session> sessions;
     private final SessionDAOService sessions;
 
     /**

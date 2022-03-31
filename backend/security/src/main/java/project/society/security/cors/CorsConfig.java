@@ -4,6 +4,7 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.Assert;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
@@ -26,6 +27,7 @@ public class CorsConfig {
         cors.addAllowedOrigin(frontendOrigin);
         cors.addAllowedHeader(String.valueOf(HttpHeaderNames.CONTENT_TYPE)); // TODO: MAKE REQUIRED FOR MUTATIVE HTTP METHODS.
         cors.addAllowedHeader("X-XSRF-TOKEN");
+        cors.addAllowedHeader(HttpHeaders.ACCEPT);
         cors.setAllowedMethods(List.of("POST", "GET", "DELETE", "OPTIONS", "PUT"));
         cors.setAllowCredentials(true);
         cors.setMaxAge(3600L);
