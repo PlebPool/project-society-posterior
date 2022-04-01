@@ -6,6 +6,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import project.society.data.dao.GenericReactiveDAO;
 import project.society.data.dao.ReactiveDAOService;
 import project.society.data.dto.HasId;
+import project.society.utility.ObjectToByteArrayAndBack;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

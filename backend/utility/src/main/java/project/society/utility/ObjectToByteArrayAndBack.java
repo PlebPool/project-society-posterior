@@ -1,4 +1,4 @@
-package project.society.security.session.model;
+package project.society.utility;
 
 import java.io.*;
 

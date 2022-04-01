@@ -8,7 +8,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
 
 @Component
-public class CustomOAuth2Util {
+public class
+CustomOAuth2Util {
     private final ServerOAuth2AuthorizedClientRepository auth2AuthorizedClientRepository;
 
     public CustomOAuth2Util(ServerOAuth2AuthorizedClientRepository auth2AuthorizedClientRepository) {
