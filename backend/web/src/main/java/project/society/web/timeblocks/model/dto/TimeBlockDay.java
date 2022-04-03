@@ -1,34 +1,55 @@
 package project.society.web.timeblocks.model.dto;
 
+import org.springframework.data.annotation.Transient;
 import project.society.data.dto.HasId;
 
 import java.io.Serializable;
 import java.time.DayOfWeek;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class TimeBlockDay implements HasId<String> {
     private String uuid; // uuid
     private String userId; // google user id.
+    @Transient private int dayIndex;
     private DayOfWeek dayOfWeek;
-    private List<TimeBlock> timeBlocks; // Ordered by start time.
+    private ArrayList<TimeBlock> timeBlocks; // Ordered by start time.
 
-    public TimeBlockDay(String userId, DayOfWeek dayOfWeek, List<TimeBlock> timeBlocks) {
-        this.uuid = this.generateUUID();
-        this.userId = userId;
-        this.dayOfWeek = dayOfWeek;
-        this.timeBlocks = timeBlocks;
-    }
-
-    public TimeBlockDay(String uuid, String userId, DayOfWeek dayOfWeek, List<TimeBlock> timeBlocks) {
+    public TimeBlockDay(String uuid, String userId, DayOfWeek dayOfWeek, ArrayList<TimeBlock> timeBlocks) {
         this.uuid = uuid;
         this.userId = userId;
         this.dayOfWeek = dayOfWeek;
         this.timeBlocks = timeBlocks;
+        this.dayIndex = dayOfWeek.getValue();
+    }
+
+    public TimeBlockDay(String userId, DayOfWeek dayOfWeek, ArrayList<TimeBlock> timeBlocks) {
+        this.uuid = this.generateUUID();
+        this.userId = userId;
+        this.dayOfWeek = dayOfWeek;
+        this.timeBlocks = timeBlocks;
+        this.dayIndex = dayOfWeek.getValue();
+    }
+
+    public TimeBlockDay() {
+        this.timeBlocks = new ArrayList<>();
+        this.uuid = this.generateUUID();
     }
 
     private String generateUUID() {
         return UUID.randomUUID().toString();
+    }
+
+    public int getDayIndex() {
+        return dayIndex;
+    }
+
+    public void setDayIndex(int dayIndex) {
+        this.dayIndex = dayIndex;
+        if(dayIndex > 0 && dayIndex < 8) {
+            this.dayOfWeek = DayOfWeek.of(dayIndex);
+        }
     }
 
     @Override
@@ -52,15 +73,15 @@ public class TimeBlockDay implements HasId<String> {
         return dayOfWeek;
     }
 
-    public void setDayOfWeek(DayOfWeek dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
+    public void setDayOfWeek(int dayOfWeek) {
+        this.dayOfWeek = DayOfWeek.of(dayOfWeek);
     }
 
     public Serializable getTimeBlocks() {
-        return (Serializable) timeBlocks;
+        return timeBlocks;
     }
 
-    public void setTimeBlocks(List<TimeBlock> timeBlocks) {
+    public void setTimeBlocks(ArrayList<TimeBlock> timeBlocks) {
         this.timeBlocks = timeBlocks;
     }
 }

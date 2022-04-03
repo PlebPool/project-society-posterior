@@ -1,6 +1,8 @@
 package project.society.web.timeblocks.model.dto;
 
-public class TimeBlock {
+import java.io.Serializable;
+
+public class TimeBlock implements Serializable {
     private String name;
     private Short startTimeMinutes; // Max 1440
     private Short timeDeltaMinutes; // Max 1440-startTimeMinutes
