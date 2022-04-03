@@ -77,11 +77,7 @@ public class SessionDAOService extends ReactiveDAOService<CustomizedMapSession, 
         public DbMapSession(CustomizedMapSession session) {
             this.id = session.getId();
             this.originalId = session.getId();
-            try {
                 this.sessionAttrs = ObjectToByteArrayAndBack.objectToByteArray((Serializable) session.getSessionAttrs());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             this.creationTime = session.getCreationTime();
             this.lastAccessedTime = session.getLastAccessedTime();
             this.expiresAt = session.getLastAccessedTime().plus(session.getMaxInactiveInterval());
@@ -99,7 +95,6 @@ public class SessionDAOService extends ReactiveDAOService<CustomizedMapSession, 
          */
         public CustomizedMapSession getAsCustomizedMapSession() {
             if(!Instant.now().isAfter(this.expiresAt)) {
-                try {
                     return new CustomizedMapSession(
                             this.id,
                             this.originalId,
@@ -107,9 +102,6 @@ public class SessionDAOService extends ReactiveDAOService<CustomizedMapSession, 
                             creationTime,
                             Instant.now()
                     );
-                } catch (ClassNotFoundException | IOException e) {
-                    e.printStackTrace();
-                }
             }
             return null;
         }
