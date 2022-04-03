@@ -24,6 +24,8 @@ project:
     frontend:
       url: frontendUrl
 server:
+  error:
+    include-message: always
   port: 8000
   ssl:
     key-store: classpath:nameOfKeystoreFile
