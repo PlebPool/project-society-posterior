@@ -9,11 +9,24 @@ public class ObjectToByteArrayAndBack {
      * @return {@link byte[]}
      * @throws IOException Forwarded from {@link ObjectInputStream}.
      */
-    public static byte[] objectToByteArray(Serializable serializable) throws IOException {
+    public static byte[] objectToByteArray(Serializable serializable) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(serializable);
-        oos.flush();
+        ObjectOutputStream oos;
+        try {
+            oos = new ObjectOutputStream(bos);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create " + ObjectOutputStream.class.getName());
+        }
+        try {
+            oos.writeObject(serializable);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to serialize " + serializable);
+        }
+        try {
+            oos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return bos.toByteArray();
     }
 
@@ -26,9 +39,20 @@ public class ObjectToByteArrayAndBack {
      * @throws ClassNotFoundException Forwarded from {@link ObjectInputStream}.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T byteArrayToObject(byte[] bytes) throws IOException, ClassNotFoundException {
+    public static <T> T byteArrayToObject(byte[] bytes) {
         ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
-        ObjectInputStream ois = new ObjectInputStream(bin);
-        return (T) ois.readObject();
+        ObjectInputStream ois;
+        try {
+            ois = new ObjectInputStream(bin);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("ObjectInputStream(%s) failed", bin));
+        }
+        try {
+            return (T) ois.readObject();
+        } catch (IOException e) {
+            throw new RuntimeException("IOException reading ois.readObject();");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("ClassNotFoundException reading ois.readObject();");
+        }
     }
 }
