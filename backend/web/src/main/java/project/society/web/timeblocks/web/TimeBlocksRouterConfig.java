@@ -19,6 +19,6 @@ public class TimeBlocksRouterConfig {
                 .route(GET("/timeBlocks/{uuid}"), timeBlockHandler::getTimeBlockById)
                 .andRoute(GET("/dev/timeBlocks/init"), timeBlockHandler::initDb)
                 .andRoute(GET("/timeBlocks"), timeBlockHandler::getTimeBlocksForUser)
-                .andRoute(POST("/no-auth/timeBlocks"), timeBlockHandler::postTimeBlockDay);
+                .andRoute(POST("/timeBlocks"), timeBlockHandler::postTimeBlockDay);
     }
 }

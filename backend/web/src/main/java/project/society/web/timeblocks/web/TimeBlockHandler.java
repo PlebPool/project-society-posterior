@@ -15,6 +15,7 @@ import project.society.web.timeblocks.model.dto.TimeBlock;
 import project.society.web.timeblocks.model.dto.TimeBlockDay;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
 import java.io.DataInputStream;
 import java.io.ObjectInputStream;
@@ -49,22 +50,26 @@ public class TimeBlockHandler {
     public Mono<ServerResponse> postTimeBlockDay(ServerRequest request) {
         return request.bodyToMono(TimeBlockDay.class)
                 .map(timeBlockDay -> {
-                    if(timeBlockDay.getDayIndex() > 7 || timeBlockDay.getDayIndex() < 0) {
-                        throw new DayIndexOutOfBoundsException(); // Returns a 400 response (with reason).
-                    }
+                    if(timeBlockDay.getDayIndex() > 7 || timeBlockDay.getDayIndex() < 0)
+                        throw new DayIndexOutOfBoundsException(); // Returns http 400 with reason message.
                     return timeBlockDay;
                 })
-                .flatMap(this.dayDAOService::save)
-                .flatMap(timeBlockDay -> ServerResponse.ok().bodyValue(timeBlockDay));
+                .zipWith(this.oAuth2Util.extractPrincipalName(request), ((timeBlockDay, principalName) -> {
+                    timeBlockDay.setUserId(principalName); // Adds principal name to timeBlock.
+                    return timeBlockDay;
+                }))
+                .flatMap(this.dayDAOService::save) // Saves timeBlock to db.
+                .flatMap(tbd -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(tbd));
     }
 
     public Mono<ServerResponse> getTimeBlockById(ServerRequest request) {
         return this.dayDAOService.findOneById(request.pathVariable("uuid"))
                 .zipWith(this.oAuth2Util.extractPrincipalName(request))
                 .filter(tuple -> tuple.getT1().getUserId().equals(tuple.getT2()))
-                .flatMap(tuple -> ServerResponse.ok()
-                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                        .bodyValue(tuple.getT1()))
+                .map(Tuple2::getT1)
+                .flatMap(tbd -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(tbd))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
 
@@ -73,7 +78,7 @@ public class TimeBlockHandler {
                 .flatMapMany(this.dayDAOService::getByUserId)
                 .collectList()
                 .flatMap(list -> ServerResponse.ok()
-                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(list))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
