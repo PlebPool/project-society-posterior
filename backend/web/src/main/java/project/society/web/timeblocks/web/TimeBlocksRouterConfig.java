@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 
 @Configuration
 public class TimeBlocksRouterConfig {
@@ -15,6 +16,9 @@ public class TimeBlocksRouterConfig {
             TimeBlockHandler timeBlockHandler
     ) {
         return RouterFunctions
-                .route(GET("/timeBlocks/{uuid}"), timeBlockHandler::getTimeBlockById);
+                .route(GET("/timeBlocks/{uuid}"), timeBlockHandler::getTimeBlockById)
+                .andRoute(GET("/dev/timeBlocks/init"), timeBlockHandler::initDb)
+                .andRoute(GET("/timeBlocks"), timeBlockHandler::getTimeBlocksForUser)
+                .andRoute(POST("/no-auth/timeBlocks"), timeBlockHandler::postTimeBlockDay);
     }
 }
