@@ -1,5 +1,6 @@
 package project.society.web.timeblocks.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Transient;
 import project.society.data.dto.HasId;
 
@@ -11,7 +12,7 @@ import java.util.UUID;
 
 public class TimeBlockDay implements HasId<String> {
     private String uuid; // uuid
-    private String userId; // google user id.
+    @JsonIgnore private String userId; // google user id. // is not revealed to the user.
     @Transient private int dayIndex;
     private DayOfWeek dayOfWeek;
     private ArrayList<TimeBlock> timeBlocks; // Ordered by start time.
