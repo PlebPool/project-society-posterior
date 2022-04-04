@@ -1,11 +1,7 @@
 package project.society.web.timeblocks.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.minidev.json.JSONObject;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import project.society.security.util.CustomOAuth2Util;
@@ -13,16 +9,11 @@ import project.society.web.timeblocks.exceptions.DayIndexOutOfBoundsException;
 import project.society.web.timeblocks.model.TimeBlockDayDAOService;
 import project.society.web.timeblocks.model.dto.TimeBlock;
 import project.society.web.timeblocks.model.dto.TimeBlockDay;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
-import java.io.DataInputStream;
-import java.io.ObjectInputStream;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Component
 public class TimeBlockHandler {
@@ -47,6 +38,32 @@ public class TimeBlockHandler {
                                 .save(new TimeBlockDay(userId, DayOfWeek.FRIDAY, list)), TimeBlockDay.class));
     }
 
+    /**
+     * Gets target {@link TimeBlockDay} and adds request body as a {@link TimeBlock} to its
+     * array. Returns the {@link TimeBlockDay}.
+     * @param request {@link ServerResponse}.
+     * @return {@link Mono} of {@link ServerResponse} containing target {@link TimeBlockDay}.
+     */
+    public Mono<ServerResponse> putTimeBlock(ServerRequest request) {
+        return request.bodyToMono(TimeBlock.class)
+                .zipWith(this.dayDAOService.findOneById(request.pathVariable("uuid")))
+                .map(tuple -> {
+                    tuple.getT2().getTimeBlocks().add(tuple.getT1());
+                    return tuple.getT2();
+                })
+                .flatMap(this.dayDAOService::save)
+                .flatMap(timeBlockDay -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(timeBlockDay));
+    }
+
+    /**
+     * Post endpoint for {@link TimeBlockDay}.
+     * Returns http 400 via exception if dayIndex is > 7 or < 0.
+     * Returns posted {@link TimeBlockDay}.
+     * @param request {@link ServerRequest}.
+     * @return {@link Mono} of {@link ServerResponse}.
+     */
     public Mono<ServerResponse> postTimeBlockDay(ServerRequest request) {
         return request.bodyToMono(TimeBlockDay.class)
                 .map(timeBlockDay -> {
@@ -62,6 +79,11 @@ public class TimeBlockHandler {
                 .flatMap(tbd -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(tbd));
     }
 
+    /**
+     * Returns {@link TimeBlockDay} containing id.
+     * @param request {@link ServerRequest}.
+     * @return {@link Mono} of {@link ServerResponse}.
+     */
     public Mono<ServerResponse> getTimeBlockById(ServerRequest request) {
         return this.dayDAOService.findOneById(request.pathVariable("uuid"))
                 .zipWith(this.oAuth2Util.extractPrincipalName(request))
@@ -73,6 +95,11 @@ public class TimeBlockHandler {
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
 
+    /**
+     * Returns all {@link TimeBlockDay} for user.
+     * @param request {@link ServerRequest}.
+     * @return {@link Mono} of {@link ServerResponse}.
+     */
     public Mono<ServerResponse> getTimeBlocksForUser(ServerRequest request) {
         return this.oAuth2Util.extractPrincipalName(request)
                 .flatMapMany(this.dayDAOService::getByUserId)

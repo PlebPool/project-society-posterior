@@ -78,7 +78,7 @@ public class TimeBlockDay implements HasId<String> {
         this.dayOfWeek = DayOfWeek.of(dayOfWeek);
     }
 
-    public Serializable getTimeBlocks() {
+    public ArrayList<TimeBlock> getTimeBlocks() {
         return timeBlocks;
     }
 
