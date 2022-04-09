@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Transient;
 import project.society.data.dto.HasId;
 
-import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class TimeBlockDay implements HasId<String> {

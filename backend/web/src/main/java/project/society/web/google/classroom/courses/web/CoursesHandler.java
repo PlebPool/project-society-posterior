@@ -35,15 +35,10 @@ public class CoursesHandler {
     public Mono<ServerResponse> getAllCoursesForUser(ServerRequest request) {
         Hooks.onOperatorDebug();
         String uri = "/courses";
-        Flux<ClassroomCourseResponseSingular> responseFlux = this.classroomService.getResponseMono(uri, request, ClassroomCourseResponsePlural.class)
-                .map(ClassroomCourseResponsePlural::getCourses)
-                .flatMapMany(Flux::fromIterable);
-        return responseFlux.hasElements().flatMap(hasElements -> {
-            if(hasElements) {
-                return ServerResponse.ok().body(BodyInserters.fromPublisher(responseFlux, ClassroomCourseResponseSingular.class));
-            } else {
-                return ServerResponse.temporaryRedirect(URI.create("/no-bitches.jpg")).build();
-            }
-        });
+        Mono<ClassroomCourseResponsePlural> response = this.classroomService
+                        .getResponseMono(uri, request, ClassroomCourseResponsePlural.class);
+        return response
+                .flatMap(courses -> ServerResponse.ok().bodyValue(courses))
+                .switchIfEmpty(ServerResponse.notFound().build());
     }
 }

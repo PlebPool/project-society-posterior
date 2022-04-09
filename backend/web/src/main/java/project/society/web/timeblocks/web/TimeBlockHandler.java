@@ -1,5 +1,6 @@
 package project.society.web.timeblocks.web;
 
+import net.minidev.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -52,6 +53,7 @@ public class TimeBlockHandler {
                     return tuple.getT2();
                 })
                 .flatMap(this.dayDAOService::save)
+                .map(this::addJSONTopLevel)
                 .flatMap(timeBlockDay -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(timeBlockDay));
@@ -76,7 +78,9 @@ public class TimeBlockHandler {
                     return timeBlockDay;
                 }))
                 .flatMap(this.dayDAOService::save) // Saves timeBlock to db.
-                .flatMap(tbd -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(tbd));
+                .map(this::addJSONTopLevel)
+                .flatMap(tbd -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(tbd))
+                .switchIfEmpty(ServerResponse.notFound().build());
     }
 
     /**
@@ -89,6 +93,7 @@ public class TimeBlockHandler {
                 .zipWith(this.oAuth2Util.extractPrincipalName(request))
                 .filter(tuple -> tuple.getT1().getUserId().equals(tuple.getT2()))
                 .map(Tuple2::getT1)
+                .map(this::addJSONTopLevel)
                 .flatMap(tbd -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(tbd))
@@ -104,9 +109,16 @@ public class TimeBlockHandler {
         return this.oAuth2Util.extractPrincipalName(request)
                 .flatMapMany(this.dayDAOService::getByUserId)
                 .collectList()
+                .map(this::addJSONTopLevel)
                 .flatMap(list -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(list))
                 .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    private JSONObject addJSONTopLevel(Object obj) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.appendField("res", obj);
+        return jsonObject;
     }
 }
