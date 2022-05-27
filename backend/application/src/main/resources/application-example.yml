@@ -18,6 +18,7 @@ logging:
     root: DEBUG or INFO
 project:
   dev:
+    allow-all-origins: true
     sessions:
       inactive-interval-s: 1800
     csrf: true

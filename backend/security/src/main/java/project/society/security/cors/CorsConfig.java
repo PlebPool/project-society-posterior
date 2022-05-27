@@ -22,9 +22,14 @@ public class CorsConfig {
     @Bean("myCorsConfig")
     public CorsConfigurationSource corsConfigurationSource(Environment environment) {
         String frontendOrigin = environment.getProperty(PropertyNameHolder.PROJECT_DEV_FRONTEND_URL);
-        Assert.hasLength(frontendOrigin, "Frontend origin cannot be empty.");
+        boolean allowAllOrigins = Boolean.parseBoolean(environment.getProperty(PropertyNameHolder.PROJECT_DEV_CORS));
         CorsConfiguration cors = new CorsConfiguration();
-        cors.addAllowedOrigin(frontendOrigin);
+        if(allowAllOrigins) {
+            cors.addAllowedOriginPattern(CorsConfiguration.ALL);
+        } else {
+            Assert.hasLength(frontendOrigin, "Frontend origin cannot be empty if allow all origins is false.");
+            cors.addAllowedOrigin(frontendOrigin);
+        }
         cors.addAllowedHeader(String.valueOf(HttpHeaderNames.CONTENT_TYPE)); // TODO: MAKE REQUIRED FOR MUTATIVE HTTP METHODS.
         cors.addAllowedHeader("X-XSRF-TOKEN");
         cors.addAllowedHeader(HttpHeaders.ACCEPT);

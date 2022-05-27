@@ -35,5 +35,5 @@ build/
 ### SECRETS ###
 application.yml
 schema.sql
-society.p12
+*.p12
 docker-compose.yml

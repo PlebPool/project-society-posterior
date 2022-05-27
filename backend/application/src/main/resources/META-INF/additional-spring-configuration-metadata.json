@@ -2,12 +2,17 @@
   "properties": [
     {
       "name": "project.dev.csrf",
-      "type": "java.lang.String",
+      "type": "java.lang.Boolean",
       "description": "If true enabled CSRF protection. Disable only for dev purposes."
     },
     {
       "name": "project.dev.frontend.url",
       "type": "java.lang.String",
       "description": "Specify frontend url for cors filter."
+    },
+    {
+      "name": "project.dev.allow-all-origins",
+      "type": "java.lang.Boolean",
+      "description": "If true, allow all origins. // For dev purposes."
     }
   ] }

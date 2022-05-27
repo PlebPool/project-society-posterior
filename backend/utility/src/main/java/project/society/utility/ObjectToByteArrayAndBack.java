@@ -7,7 +7,6 @@ public class ObjectToByteArrayAndBack {
      * Turns an object into a byte array.
      * @param serializable {@link Serializable} object.
      * @return {@link byte[]}
-     * @throws IOException Forwarded from {@link ObjectInputStream}.
      */
     public static byte[] objectToByteArray(Serializable serializable) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
