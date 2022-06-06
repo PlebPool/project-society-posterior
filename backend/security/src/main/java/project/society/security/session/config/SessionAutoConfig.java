@@ -18,41 +18,43 @@ import project.society.security.session.model.SessionDAOService;
 @Configuration
 @EnableSpringWebSession
 public class SessionAutoConfig {
-    /**
-     * @param dao {@link GenericReactiveDAO}. Generic data access object.
-     * @return {@link SessionDAOService}. Session focused abstraction for {@link GenericReactiveDAO}.
-     */
-    @Bean
-    public SessionDAOService sessionDAOService(GenericReactiveDAO dao) {
-        Assert.notNull(dao, dao.getClass().getName() + " cannot be null.");
-        return new SessionDAOService(dao);
-    }
+  /**
+   * @param dao {@link GenericReactiveDAO}. Generic data access object.
+   * @return {@link SessionDAOService}. Session focused abstraction for {@link GenericReactiveDAO}.
+   */
+  @Bean
+  public SessionDAOService sessionDAOService(GenericReactiveDAO dao) {
+    Assert.notNull(dao, dao.getClass().getName() + " cannot be null.");
+    return new SessionDAOService(dao);
+  }
 
-    /**
-     * @param sessionDAOService {@link SessionDAOService}. Session focused abstraction for {@link GenericReactiveDAO}.
-     * @return {@link MySqlReactiveSessionRepository} {@link org.springframework.session.ReactiveSessionRepository} backed by MySql.
-     */
-    @Bean
-    public ReactiveSessionRepository<CustomizedMapSession> mySqlReactiveSessionRepository(
-            SessionDAOService sessionDAOService,
-            Environment env
-    ) {
-        return new MySqlReactiveSessionRepository(sessionDAOService, env);
-    }
+  /**
+   * @param sessionDAOService {@link SessionDAOService}. Session focused abstraction for {@link
+   *     GenericReactiveDAO}.
+   * @return {@link MySqlReactiveSessionRepository} {@link
+   *     org.springframework.session.ReactiveSessionRepository} backed by MySql.
+   */
+  @Bean
+  public ReactiveSessionRepository<CustomizedMapSession> mySqlReactiveSessionRepository(
+      SessionDAOService sessionDAOService, Environment env) {
+    return new MySqlReactiveSessionRepository(sessionDAOService, env);
+  }
 
-    /**
-     * Persists {@link org.springframework.security.oauth2.client.OAuth2AuthorizedClient} in {@link org.springframework.web.server.WebSession}.
-     * @return {@link ServerOAuth2AuthorizedClientRepository}.
-     */
-    @Bean
-    public ServerOAuth2AuthorizedClientRepository webSessionServerOAuth2AuthorizedClientRepository() {
-        return new WebSessionServerOAuth2AuthorizedClientRepository();
-    }
+  /**
+   * Persists {@link org.springframework.security.oauth2.client.OAuth2AuthorizedClient} in {@link
+   * org.springframework.web.server.WebSession}.
+   *
+   * @return {@link ServerOAuth2AuthorizedClientRepository}.
+   */
+  @Bean
+  public ServerOAuth2AuthorizedClientRepository webSessionServerOAuth2AuthorizedClientRepository() {
+    return new WebSessionServerOAuth2AuthorizedClientRepository();
+  }
 
-    @Bean
-    public WebSessionIdResolver webSessionIdResolver() {
-        CookieWebSessionIdResolver resolver = new CookieWebSessionIdResolver();
-        resolver.addCookieInitializer(responseCookieBuilder -> responseCookieBuilder.sameSite("Lax"));
-        return resolver;
-    }
+  @Bean
+  public WebSessionIdResolver webSessionIdResolver() {
+    CookieWebSessionIdResolver resolver = new CookieWebSessionIdResolver();
+    resolver.addCookieInitializer(responseCookieBuilder -> responseCookieBuilder.sameSite("Lax"));
+    return resolver;
+  }
 }

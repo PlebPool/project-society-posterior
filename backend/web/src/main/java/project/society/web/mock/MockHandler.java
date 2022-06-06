@@ -9,14 +9,15 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class MockHandler {
-    /**
-     * It'll mock the end user.
-     * @param request {@link ServerRequest}.
-     * @return {@link Mono} of {@link ServerResponse}.
-     */
-    public Mono<ServerResponse> mock(ServerRequest request) {
-        return ServerResponse.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN.toString())
-                .bodyValue("I am mocking you.");
-    }
+  /**
+   * It'll mock the end user.
+   *
+   * @param request {@link ServerRequest}.
+   * @return {@link Mono} of {@link ServerResponse}.
+   */
+  public Mono<ServerResponse> mock(ServerRequest request) {
+    return ServerResponse.ok()
+        .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN.toString())
+        .bodyValue("I am mocking you.");
+  }
 }
