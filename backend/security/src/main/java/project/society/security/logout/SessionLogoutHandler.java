@@ -10,10 +10,8 @@ import reactor.core.publisher.Mono;
 @Component
 public class SessionLogoutHandler implements ServerLogoutHandler {
 
-    @Override
-    public Mono<Void> logout(WebFilterExchange exchange, Authentication authentication) {
-        return exchange.getExchange().getSession()
-                .flatMap(WebSession::invalidate)
-                .then();
-    }
+  @Override
+  public Mono<Void> logout(WebFilterExchange exchange, Authentication authentication) {
+    return exchange.getExchange().getSession().flatMap(WebSession::invalidate).then();
+  }
 }

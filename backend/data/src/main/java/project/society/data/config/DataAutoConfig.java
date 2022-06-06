@@ -8,14 +8,15 @@ import project.society.data.dao.GenericReactiveDAO;
 
 @Configuration
 public class DataAutoConfig {
-    /**
-     * {@link Bean} which is a composite of {@link project.society.data.dao.ReactiveDAOService}.
-     * @param r2dbcEntityTemplate {@link R2dbcEntityTemplate} allowing database communication.
-     * @return {@link GenericReactiveDAO}.
-     */
-    @Bean("dao")
-    @ConditionalOnMissingBean(GenericReactiveDAO.class)
-    public GenericReactiveDAO genericReactiveDAO(R2dbcEntityTemplate r2dbcEntityTemplate) {
-        return new GenericReactiveDAO(r2dbcEntityTemplate);
-    }
+  /**
+   * {@link Bean} which is a composite of {@link project.society.data.dao.ReactiveDAOService}.
+   *
+   * @param r2dbcEntityTemplate {@link R2dbcEntityTemplate} allowing database communication.
+   * @return {@link GenericReactiveDAO}.
+   */
+  @Bean("dao")
+  @ConditionalOnMissingBean(GenericReactiveDAO.class)
+  public GenericReactiveDAO genericReactiveDAO(R2dbcEntityTemplate r2dbcEntityTemplate) {
+    return new GenericReactiveDAO(r2dbcEntityTemplate);
+  }
 }

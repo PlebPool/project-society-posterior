@@ -25,92 +25,113 @@ import project.society.utility.PropertyNameHolder;
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
-    /**
-     * Name of environment variable containing oauth2 google variables.
-     */
-    public static final String GOOGLE_ENV_PATH = "spring.security.oauth2.client.registration.google";
-    private final Environment environment;
+  /** Name of environment variable containing oauth2 google variables. */
+  public static final String GOOGLE_ENV_PATH = "spring.security.oauth2.client.registration.google";
 
-    public SecurityConfig(Environment environment) {
-        this.environment = environment;
-    }
+  private final Environment environment;
 
-    @Bean
-    public SecurityWebFilterChain securityWebFilterChain(
-            ServerHttpSecurity http,
-            @Qualifier("myCorsConfig") CorsConfigurationSource corsSource,
-            SessionLogoutHandler sessionLogoutHandler
-    ) {
-        return http
-                .csrf().disable()
-                .cors().configurationSource(corsSource)
-                .and().authorizeExchange()
-                .pathMatchers("/no-auth/**", "/").permitAll()
-                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .pathMatchers(HttpMethod.POST, "/logout").permitAll()
-                .anyExchange().authenticated()
-                .and().oauth2Login()
-                .and().logout().logoutHandler(sessionLogoutHandler)
-                .and().oauth2Client().clientRegistrationRepository(this.reactiveClientRegistrationRepository())
-                .and().build();
-    }
+  public SecurityConfig(Environment environment) {
+    this.environment = environment;
+  }
 
-    /**
-     * Only loaded if environment property {@link PropertyNameHolder#PROJECT_DEV_CSRF} is false.
-     * Which it is by default.
-     * @param security {@link ServerHttpSecurity}.
-     * @return {@link SecurityWebFilterChain}.
-     */
-    @Bean
-    @ConditionalOnProperty(value = PropertyNameHolder.PROJECT_DEV_CSRF, havingValue = "false")
-    public SecurityWebFilterChain csrfDisable(ServerHttpSecurity security) {
-        return security.csrf().disable().build();
-    }
+  @Bean
+  public SecurityWebFilterChain securityWebFilterChain(
+      ServerHttpSecurity http,
+      @Qualifier("myCorsConfig") CorsConfigurationSource corsSource,
+      SessionLogoutHandler sessionLogoutHandler) {
+    return http.csrf()
+        .disable()
+        .cors()
+        .configurationSource(corsSource)
+        .and()
+        .authorizeExchange()
+        .pathMatchers("/no-auth/**", "/")
+        .permitAll()
+        .pathMatchers(HttpMethod.OPTIONS, "/**")
+        .permitAll()
+        .pathMatchers(HttpMethod.POST, "/logout")
+        .permitAll()
+        .anyExchange()
+        .authenticated()
+        .and()
+        .oauth2Login()
+        .and()
+        .logout()
+        .logoutHandler(sessionLogoutHandler)
+        .and()
+        .oauth2Client()
+        .clientRegistrationRepository(this.reactiveClientRegistrationRepository())
+        .and()
+        .build();
+  }
 
-    /**
-     * Returns a repository containing our {@link ClientRegistration}'s.
-     * @return {@link ReactiveClientRegistrationRepository}.
-     */
-    @Bean
-    public ReactiveClientRegistrationRepository reactiveClientRegistrationRepository() {
-        return new InMemoryReactiveClientRegistrationRepository(this.googleClientRegistration());
-    }
+  /**
+   * Only loaded if environment property {@link PropertyNameHolder#PROJECT_DEV_CSRF} is false. Which
+   * it is by default.
+   *
+   * @param security {@link ServerHttpSecurity}.
+   * @return {@link SecurityWebFilterChain}.
+   */
+  @Bean
+  @ConditionalOnProperty(value = PropertyNameHolder.PROJECT_DEV_CSRF, havingValue = "false")
+  public SecurityWebFilterChain csrfDisable(ServerHttpSecurity security) {
+    return security.csrf().disable().build();
+  }
 
-    /**
-     * Google client registration.
-     * @return {@link ClientRegistration}.
-     */
-    private ClientRegistration googleClientRegistration() {
-        return CommonOAuth2Provider.GOOGLE.getBuilder("google")
-                .clientId(environment.getProperty(GOOGLE_ENV_PATH + ".client-id"))
-                .clientSecret(environment.getProperty(GOOGLE_ENV_PATH + ".client-secret"))
-                .scope("openid", "profile", "email", "address", "phone",
-                        "https://www.googleapis.com/auth/classroom.courses.readonly",
-                        "https://www.googleapis.com/auth/classroom.coursework.me.readonly")
-                .redirectUri(environment.getProperty(GOOGLE_ENV_PATH + ".redirect-uri"))
-                .build();
-    }
+  /**
+   * Returns a repository containing our {@link ClientRegistration}'s.
+   *
+   * @return {@link ReactiveClientRegistrationRepository}.
+   */
+  @Bean
+  public ReactiveClientRegistrationRepository reactiveClientRegistrationRepository() {
+    return new InMemoryReactiveClientRegistrationRepository(this.googleClientRegistration());
+  }
 
-    /**
-     * OAuth2AuthorizedClientManager.
-     * @param clientRegistrationRepository {@link ReactiveClientRegistrationRepository}
-     * @param authorizedClientRepository {@link ServerOAuth2AuthorizedClientRepository}
-     * @return - {@link ReactiveOAuth2AuthorizedClientManager}
-     */
-    @Bean
-    public ReactiveOAuth2AuthorizedClientManager authorizedClientManager(
-            ReactiveClientRegistrationRepository clientRegistrationRepository,
-            ServerOAuth2AuthorizedClientRepository authorizedClientRepository
-    ) {
-        ReactiveOAuth2AuthorizedClientProvider authorizedClientProvider = ReactiveOAuth2AuthorizedClientProviderBuilder.builder()
-                .authorizationCode()
-                .refreshToken()
-                .clientCredentials()
-                .password()
-                .build();
-        DefaultReactiveOAuth2AuthorizedClientManager authorizedClientManager = new DefaultReactiveOAuth2AuthorizedClientManager(
-                clientRegistrationRepository, authorizedClientRepository);
-        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
-        return authorizedClientManager;
-    }
+  /**
+   * Google client registration.
+   *
+   * @return {@link ClientRegistration}.
+   */
+  private ClientRegistration googleClientRegistration() {
+    return CommonOAuth2Provider.GOOGLE
+        .getBuilder("google")
+        .clientId(environment.getProperty(GOOGLE_ENV_PATH + ".client-id"))
+        .clientSecret(environment.getProperty(GOOGLE_ENV_PATH + ".client-secret"))
+        .scope(
+            "openid",
+            "profile",
+            "email",
+            "address",
+            "phone",
+            "https://www.googleapis.com/auth/classroom.courses.readonly",
+            "https://www.googleapis.com/auth/classroom.coursework.me.readonly")
+        .redirectUri(environment.getProperty(GOOGLE_ENV_PATH + ".redirect-uri"))
+        .build();
+  }
+
+  /**
+   * OAuth2AuthorizedClientManager.
+   *
+   * @param clientRegistrationRepository {@link ReactiveClientRegistrationRepository}
+   * @param authorizedClientRepository {@link ServerOAuth2AuthorizedClientRepository}
+   * @return - {@link ReactiveOAuth2AuthorizedClientManager}
+   */
+  @Bean
+  public ReactiveOAuth2AuthorizedClientManager authorizedClientManager(
+      ReactiveClientRegistrationRepository clientRegistrationRepository,
+      ServerOAuth2AuthorizedClientRepository authorizedClientRepository) {
+    ReactiveOAuth2AuthorizedClientProvider authorizedClientProvider =
+        ReactiveOAuth2AuthorizedClientProviderBuilder.builder()
+            .authorizationCode()
+            .refreshToken()
+            .clientCredentials()
+            .password()
+            .build();
+    DefaultReactiveOAuth2AuthorizedClientManager authorizedClientManager =
+        new DefaultReactiveOAuth2AuthorizedClientManager(
+            clientRegistrationRepository, authorizedClientRepository);
+    authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
+    return authorizedClientManager;
+  }
 }

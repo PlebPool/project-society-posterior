@@ -6,9 +6,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class ClassroomWebClientConfig {
-    public static final String GOOGLE_CLASSROOM_SERVICE_BASE_URL = "https://classroom.googleapis.com/v1";
-    @Bean("classroomWebClient")
-    public WebClient classroomClient() {
-        return WebClient.builder().baseUrl(GOOGLE_CLASSROOM_SERVICE_BASE_URL).build();
-    }
+  public static final String GOOGLE_CLASSROOM_SERVICE_BASE_URL =
+      "https://classroom.googleapis.com/v1";
+
+  @Bean("classroomWebClient")
+  public WebClient classroomClient() {
+    return WebClient.builder().baseUrl(GOOGLE_CLASSROOM_SERVICE_BASE_URL).build();
+  }
 }
